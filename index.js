@@ -1,8 +1,9 @@
 const { response, request } = require("express")
 const express = require("express")
+const morgan = require('morgan')
 const app = express()
 
-const morgan = require('morgan')
+app.use(express.static('build'))
 
 app.use(express.json())
 
@@ -51,6 +52,10 @@ let phonebook = [
         "id": 4
     }
 ]
+
+app.get('/', (request, response) => {
+    response.send()
+})
 
 app.get('/info', (request, response) => {
     response.send(`
@@ -112,6 +117,11 @@ app.post('/api/persons', (request, response) => {
     phonebook = phonebook.concat(entry)
     response.json(entry)
 })
+
+const unkownEndpoint = (request, response) => {
+    response.status(404).send( { error : 'unknown endpoint'} )
+  }
+  app.use(unkownEndpoint)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
